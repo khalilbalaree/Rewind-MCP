@@ -1,6 +1,6 @@
 # 🔄 Rewind MCP
 
-Smart but ultra-lightweight checkpointing mcp server for Claude Code CLI.
+Smart and lightweight checkpointing mcp server for Claude Code CLI.
 
 ## Features
 
@@ -168,7 +168,7 @@ Restored files:
 ```
 
 
-## Available Tools
+## Available Functional Calls for Claude
 
 - `checkpoint(files, description)` - Create checkpoint before changes
 - `undo(file)` - Restore to previous checkpoint  
