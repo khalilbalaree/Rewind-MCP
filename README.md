@@ -17,7 +17,9 @@ Smart checkpoint-based undo system for Claude Codec CLI.
 🤖 Agent: Creating checkpoint before modifications...
 ✅ Checkpoint: "Before adding error handling"
 
-👤 User: "This breaks the flow, please undo"
+🤖 Agent: "I have added error handling to the code"
+
+👤 User: "This breaks the flow, please rewind"
 
 🤖 Agent: Restoring files from checkpoint...
 ✅ Files restored to state before error handling
@@ -102,6 +104,8 @@ EOF
 Files captured: 1
   - src/auth.js
 
+🤖 Agent: "I have added authentication to the login function"
+
 👤 User: "This breaks the existing flow, please rewind the change"
 
 🤖 Agent: I'll undo the authentication changes.
@@ -121,7 +125,9 @@ Restored files:
 Files captured: 1
   - config/database.js (created)
 
-👤 User: "Actually, I want to use environment variables instead. Please undo this"
+🤖 Agent: "I have created the database configuration file"
+
+👤 User: "Actually, I want to use environment variables instead. Please rewind this"
 
 🤖 Agent: I'll remove the database config file.
 ⏺ undo-mcp - undo
@@ -140,7 +146,9 @@ Restored files:
 Files captured: 1
   - src/utils.js
 
-👤 User: "Wait, I still need some functions from that file. Please undo the deletion"
+🤖 Agent: "I have deleted the old utility functions file"
+
+👤 User: "Wait, I still need some functions from that file. Please rewind the deletion"
 
 🤖 Agent: I'll restore the deleted utility functions file.
 ⏺ undo-mcp - undo
@@ -160,6 +168,8 @@ Files captured: 3
   - src/auth.js (modified)
   - src/middleware.js (modified)  
   - src/routes.js (modified)
+
+🤖 Agent: "I have refactored the authentication system across multiple files"
 
 👤 User: "The refactoring introduced bugs. Please rewind all these changes"
 
