@@ -1,6 +1,6 @@
 # 🔄 Rewind MCP
 
-Smart checkpoint-based undo mcp server for Claude Code CLI.
+Smart but ultra-lightweight checkpointing mcp server for Claude Code CLI.
 
 ## Features
 
@@ -173,6 +173,7 @@ Restored files:
 - `checkpoint(files, description)` - Create checkpoint before changes
 - `undo(file)` - Restore to previous checkpoint  
 - `list_undos()` - Show available checkpoints
+- `cleanup` - clean up all the checkpoints
 - `status()` - Show current checkpoint status
 
 
