@@ -83,11 +83,11 @@ EOF
 
 🤖 Agent: I'll add comprehensive error handling to your API files.
 
-[Agent creates checkpoint before changes]
-✅ Checkpoint created: "Add API error handling"
-Files captured: 2
-  - src/api/routes.js
-  - src/middleware/errorHandler.js
+[Agent modifies src/api/routes.js]
+✅ Checkpoint created and pushed to stack: "Modified src/api/routes.js"
+
+[Agent creates src/middleware/errorHandler.js]
+✅ Checkpoint created and pushed to stack: "Created src/middleware/errorHandler.js"
 
 🤖 Agent: I've added try-catch blocks and centralized error handling to your API routes and created a new error middleware.
 
@@ -95,27 +95,29 @@ Files captured: 2
 
 🤖 Agent: I'll show you the available checkpoints.
 📋 Available checkpoints:
-  1. "Add API error handling" (2 files) - [Most Recent]
-  2. "Database schema update" (3 files)
-  3. "Initial project setup" (5 files)
+  1. "Created src/middleware/errorHandler.js" - [Most Recent]
+  2. "Modified src/api/routes.js"
+  3. "Database schema update"
+  4. "Initial project setup"
 
 👤 User: "Rewind the most recent changes"
 
-🤖 Agent: I'll restore the files from the "Add API error handling" checkpoint.
-✅ Undone: "Add API error handling"
+🤖 Agent: I'll restore the files from the most recent checkpoints.
+✅ Undone: "Created src/middleware/errorHandler.js"
+✅ Undone: "Modified src/api/routes.js"
 Restored files:
-  - src/api/routes.js
+  - src/api/routes.js (restored)
   - src/middleware/errorHandler.js (deleted)
 
 👤 User: "Perfect! Now implement error handling using a custom Error class instead"
 
 🤖 Agent: I'll implement error handling using a custom Error class approach.
 
-[Agent creates new checkpoint]
-✅ Checkpoint created: "Custom error class implementation"
-Files captured: 2
-  - src/api/routes.js
-  - src/utils/CustomError.js (created)
+[Agent modifies src/api/routes.js]
+✅ Checkpoint created and pushed to stack: "Modified src/api/routes.js"
+
+[Agent creates src/utils/CustomError.js]
+✅ Checkpoint created and pushed to stack: "Created src/utils/CustomError.js"
 
 🤖 Agent: I've implemented error handling using a custom Error class that provides better error categorization and response formatting.
 ```
