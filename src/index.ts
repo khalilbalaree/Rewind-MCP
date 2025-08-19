@@ -44,7 +44,7 @@ const TOOLS = [
   },
   {
     name: "undo",
-    description: "Undo the last checkpoint (pops from stack and restores files)",
+    description: "Undo the last checkpoint (pops from stack and restores files). Each call removes the latest checkpoint from the stack. To undo multiple changes, call this function repeatedly until the desired state is reached.",
     inputSchema: {
       type: "object",
       properties: {},

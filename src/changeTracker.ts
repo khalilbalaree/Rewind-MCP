@@ -162,8 +162,11 @@ export class ChangeTracker {
       
       const allFilesList = [filesList, createdFilesList].filter(Boolean).join('\n');
       
+      const isNext = index === this.undoStack.length - 1;
+      const prefix = isNext ? "⭐ NEXT TO UNDO" : "";
+      
       list.push(
-        `[${index + 1}] ${checkpoint.description}\n` +
+        `[${index + 1}] ${checkpoint.description}${prefix ? ` ${prefix}` : ""}\n` +
         `    Created: ${timeAgo} | Files: ${totalFiles} (${fileCount} modified, ${createdFileCount} created)\n${allFilesList}`
       );
     });
