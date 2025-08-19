@@ -42,7 +42,7 @@ npm run build
 
 Add this server to your Claude Code MCP configuration:
 
-#### macOS/Linux
+#### User-Based Configuration (Global)
 Edit `~/Library/Application Support/Claude/claude_code_config.json`:
 
 ```json
@@ -51,21 +51,6 @@ Edit `~/Library/Application Support/Claude/claude_code_config.json`:
     "undo-mcp": {
       "command": "node",
       "args": ["/absolute/path/to/undo-mcp/dist/index.js"],
-      "env": {}
-    }
-  }
-}
-```
-
-#### Windows
-Edit `%APPDATA%\Claude\claude_code_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "undo-mcp": {
-      "command": "node",
-      "args": ["C:\\absolute\\path\\to\\undo-mcp\\dist\\index.js"],
       "env": {}
     }
   }
