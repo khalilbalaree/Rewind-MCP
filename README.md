@@ -4,10 +4,9 @@ Smart and lightweight checkpointing mcp server for Claude Code CLI.
 
 ## Features
 
-- 🎯 **Smart Checkpointing**: Automatically saves file states before any changes
-- 🔄 **Complete Undo Support**: Restore modified files, recover deleted files, or remove unwanted files  
-- ⚡ **Fast Multi-File Restore**: Undo changes across multiple files instantly
-- 🧹 **Clean History**: Automatically removes duplicate checkpoints
+- 🎯 **Smart Checkpointing**: Automatically checkpoint project states before agent wants to make any changes
+- 🔄 **Complete Undo Support**: Restore modified files, recover deleted files, or remove unwanted files
+- ⚡ **Fast Multi-File Restore**: Rewind changes across multiple files instantly
 
 ## Example Agent Interaction
 
@@ -84,17 +83,18 @@ EOF
 👤 User: "Add authentication to the login function"
 
 🤖 Agent: I'll add authentication to your login function.
-⏺ undo-mcp - checkpoint (description: "Add authentication to login", files: ["src/auth.js"])
+⏺ Rewind-MCP - checkpoint (description: "Add authentication to login", files: ["src/auth.js"])
 ✅ Checkpoint created: "Add authentication to login"
 Files captured: 1
   - src/auth.js
+
+... (code changes)
 
 🤖 Agent: "I have added authentication to the login function"
 
 👤 User: "This breaks the existing flow, please rewind the change"
 
 🤖 Agent: I'll undo the authentication changes.
-⏺ undo-mcp - undo
 ✅ Undone: "Add authentication to login" 
 Restored files:
   - src/auth.js
@@ -105,7 +105,7 @@ Restored files:
 👤 User: "Create a new config file for the database"
 
 🤖 Agent: I'll create a database configuration file.
-⏺ undo-mcp - checkpoint (description: "Create database config", files: ["config/database.js"])
+⏺ Rewind-MCP - checkpoint (description: "Create database config", files: ["config/database.js"])
 ✅ Checkpoint created: "Create database config"
 Files captured: 1
   - config/database.js (created)
@@ -115,7 +115,6 @@ Files captured: 1
 👤 User: "Actually, I want to use environment variables instead. Please rewind this"
 
 🤖 Agent: I'll remove the database config file.
-⏺ undo-mcp - undo
 ✅ Undone: "Create database config"
 Restored files:
   - config/database.js (deleted)
@@ -126,7 +125,7 @@ Restored files:
 👤 User: "Delete the old utility functions file"
 
 🤖 Agent: I'll remove the old utility functions file.
-⏺ undo-mcp - checkpoint (description: "Delete old utils", files: ["src/utils.js"])
+⏺ Rewind-MCP - checkpoint (description: "Delete old utils", files: ["src/utils.js"])
 ✅ Checkpoint created: "Delete old utils"
 Files captured: 1
   - src/utils.js
@@ -136,7 +135,6 @@ Files captured: 1
 👤 User: "Wait, I still need some functions from that file. Please rewind the deletion"
 
 🤖 Agent: I'll restore the deleted utility functions file.
-⏺ undo-mcp - undo
 ✅ Undone: "Delete old utils"
 Restored files:
   - src/utils.js (restored from deletion)
@@ -147,7 +145,7 @@ Restored files:
 👤 User: "Refactor the entire authentication system"
 
 🤖 Agent: I'll refactor the authentication system across multiple files.
-⏺ undo-mcp - checkpoint (description: "Refactor auth system", files: ["src/auth.js", "src/middleware.js", "src/routes.js"])
+⏺ Rewind-MCP - checkpoint (description: "Refactor auth system", files: ["src/auth.js", "src/middleware.js", "src/routes.js"])
 ✅ Checkpoint created: "Refactor auth system"
 Files captured: 3
   - src/auth.js (modified)
@@ -159,7 +157,7 @@ Files captured: 3
 👤 User: "The refactoring introduced bugs. Please rewind all these changes"
 
 🤖 Agent: I'll restore all files from the checkpoint.
-⏺ undo-mcp - undo
+⏺ Rewind-MCP - undo
 ✅ Undone: "Refactor auth system"
 Restored files:
   - src/auth.js
@@ -169,6 +167,7 @@ Restored files:
 
 
 ## Available Functional Calls for Claude
+Just ask, and it will do the rest.
 
 - `checkpoint(files, description)` - Create checkpoint before changes
 - `undo(file)` - Restore to previous checkpoint  
@@ -191,9 +190,9 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙋‍♂️ Support
 
-- 📖 [Documentation](https://github.com/khalilbalaree/undo-mcp/wiki)
-- 🐛 [Issue Tracker](https://github.com/khalilbalaree/undo-mcp/issues)
-- 💬 [Discussions](https://github.com/khalilbalaree/undo-mcp/discussions)
+- 📖 [Documentation](https://github.com/khalilbalaree/Rewind-MCP/wiki)
+- 🐛 [Issue Tracker](https://github.com/khalilbalaree/Rewind-MCP/issues)
+- 💬 [Discussions](https://github.com/khalilbalaree/Rewind-MCP/discussions)
 
 ---
 
