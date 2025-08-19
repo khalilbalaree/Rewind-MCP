@@ -1,7 +1,9 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from "fs";
+import { dirname } from "path";
 
 interface UndoCheckpoint {
   files: Map<string, string>; // filepath -> content
+  createdFiles: Set<string>; // files that were created (didn't exist before)
   timestamp: Date;
   description: string;
 }
@@ -11,27 +13,33 @@ export class ChangeTracker {
 
   async createCheckpoint(files: string[], description: string = "Manual checkpoint"): Promise<void> {
     const fileContents = new Map<string, string>();
+    const createdFiles = new Set<string>();
 
     console.error(`[DEBUG] Creating checkpoint: ${description}`);
     console.error(`[DEBUG] Files to checkpoint: ${files.join(', ')}`);
 
     for (const filepath of files) {
       if (!existsSync(filepath)) {
-        throw new Error(`File does not exist: ${filepath}`);
+        console.error(`[DEBUG] File will be created: ${filepath}`);
+        createdFiles.add(filepath);
+      } else {
+        const content = readFileSync(filepath, "utf-8");
+        fileContents.set(filepath, content);
+        console.error(`[DEBUG] Captured content for ${filepath}: ${content.length} characters`);
       }
-      const content = readFileSync(filepath, "utf-8");
-      fileContents.set(filepath, content);
-      console.error(`[DEBUG] Captured content for ${filepath}: ${content.length} characters`);
     }
 
     const checkpoint: UndoCheckpoint = {
       files: fileContents,
+      createdFiles,
       timestamp: new Date(),
       description,
     };
 
     this.undoStack.push(checkpoint);
     console.error(`[DEBUG] Checkpoint created. Stack size: ${this.undoStack.length}`);
+    console.error(`[DEBUG] Files to be created: ${Array.from(createdFiles).join(', ') || 'none'}`);
+    console.error(`[DEBUG] Existing files captured: ${fileContents.size}`);
   }
 
   async undo(): Promise<{
@@ -53,25 +61,58 @@ export class ChangeTracker {
 
     console.error(`[DEBUG] Starting undo for checkpoint: ${checkpoint.description}`);
     console.error(`[DEBUG] Files to restore: ${Array.from(checkpoint.files.keys()).join(', ')}`);
+    console.error(`[DEBUG] Files to remove: ${Array.from(checkpoint.createdFiles).join(', ') || 'none'}`);
 
     try {
+      // First, restore existing files
       for (const [filepath, content] of checkpoint.files.entries()) {
         try {
           console.error(`[DEBUG] Restoring file: ${filepath}`);
           console.error(`[DEBUG] Content length: ${content.length}`);
           
-          // Check if file exists
-          if (!existsSync(filepath)) {
-            errors.push(`File does not exist: ${filepath}`);
-            continue;
+          // If file doesn't exist, it was deleted - restore it
+          const wasDeleted = !existsSync(filepath);
+          if (wasDeleted) {
+            console.error(`[DEBUG] File was deleted, restoring: ${filepath}`);
+            // Ensure directory exists before creating file
+            const dir = dirname(filepath);
+            if (!existsSync(dir)) {
+              mkdirSync(dir, { recursive: true });
+            }
           }
           
           writeFileSync(filepath, content, "utf-8");
-          restoredFiles.push(filepath);
+          restoredFiles.push(wasDeleted ? `${filepath} (restored from deletion)` : filepath);
           console.error(`[DEBUG] Successfully restored: ${filepath}`);
         } catch (fileError) {
-          errors.push(`Failed to restore ${filepath}: ${fileError}`);
+          const errorMsg = `Failed to restore ${filepath}: ${fileError}`;
+          errors.push(errorMsg);
           console.error(`[DEBUG] Error restoring ${filepath}:`, fileError);
+          console.error(`[DEBUG] Full error details:`, {
+            filepath,
+            contentLength: content.length,
+            fileExists: existsSync(filepath),
+            dirExists: existsSync(dirname(filepath)),
+            error: fileError
+          });
+        }
+      }
+
+      // Then, remove files that were created (undo file creation)
+      for (const filepath of checkpoint.createdFiles) {
+        try {
+          console.error(`[DEBUG] Removing created file: ${filepath}`);
+          
+          if (existsSync(filepath)) {
+            unlinkSync(filepath);
+            restoredFiles.push(`${filepath} (deleted)`);
+            console.error(`[DEBUG] Successfully removed: ${filepath}`);
+          } else {
+            console.error(`[DEBUG] Created file ${filepath} already doesn't exist`);
+          }
+        } catch (fileError) {
+          errors.push(`Failed to remove created file ${filepath}: ${fileError}`);
+          console.error(`[DEBUG] Error removing ${filepath}:`, fileError);
         }
       }
 
@@ -112,11 +153,18 @@ export class ChangeTracker {
     const list: string[] = [];
     this.undoStack.forEach((checkpoint, index) => {
       const fileCount = checkpoint.files.size;
+      const createdFileCount = checkpoint.createdFiles.size;
+      const totalFiles = fileCount + createdFileCount;
       const timeAgo = this.getTimeAgo(checkpoint.timestamp);
-      const filesList = Array.from(checkpoint.files.keys()).map(f => `    - ${f}`).join('\n');
+      
+      const filesList = Array.from(checkpoint.files.keys()).map(f => `    - ${f} (modified)`).join('\n');
+      const createdFilesList = Array.from(checkpoint.createdFiles).map(f => `    - ${f} (created)`).join('\n');
+      
+      const allFilesList = [filesList, createdFilesList].filter(Boolean).join('\n');
+      
       list.push(
         `[${index + 1}] ${checkpoint.description}\n` +
-        `    Created: ${timeAgo} | Files: ${fileCount}\n${filesList}`
+        `    Created: ${timeAgo} | Files: ${totalFiles} (${fileCount} modified, ${createdFileCount} created)\n${allFilesList}`
       );
     });
 
@@ -191,17 +239,28 @@ export class ChangeTracker {
    * Check if a checkpoint matches the current state of files on disk
    */
   private checkpointMatchesCurrentFiles(checkpoint: UndoCheckpoint): boolean {
+    // Check existing files in checkpoint
     for (const [filepath, checkpointContent] of checkpoint.files.entries()) {
       if (!existsSync(filepath)) {
-        // File was deleted, so it doesn't match
+        // File was deleted since checkpoint, so current state doesn't match checkpoint
         return false;
       }
 
       const currentContent = readFileSync(filepath, "utf-8");
       if (currentContent !== checkpointContent) {
+        // File was modified since checkpoint, so current state doesn't match checkpoint
         return false;
       }
     }
+
+    // Check created files - they should not exist for the checkpoint to match current state
+    for (const filepath of checkpoint.createdFiles) {
+      if (existsSync(filepath)) {
+        // File was created since checkpoint, so current state doesn't match the pre-creation state
+        return false;
+      }
+    }
+    
     return true;
   }
 
@@ -209,15 +268,23 @@ export class ChangeTracker {
    * Compare two checkpoints to see if they have identical file contents
    */
   private checkpointsHaveIdenticalContent(checkpoint1: UndoCheckpoint, checkpoint2: UndoCheckpoint): boolean {
-    // Must have same number of files
-    if (checkpoint1.files.size !== checkpoint2.files.size) {
+    // Must have same number of files and created files
+    if (checkpoint1.files.size !== checkpoint2.files.size || 
+        checkpoint1.createdFiles.size !== checkpoint2.createdFiles.size) {
       return false;
     }
 
-    // Check if all files exist in both and have identical content
+    // Check if all existing files exist in both and have identical content
     for (const [filepath, content1] of checkpoint1.files.entries()) {
       const content2 = checkpoint2.files.get(filepath);
       if (content2 === undefined || content1 !== content2) {
+        return false;
+      }
+    }
+
+    // Check if both checkpoints have the same created files
+    for (const filepath of checkpoint1.createdFiles) {
+      if (!checkpoint2.createdFiles.has(filepath)) {
         return false;
       }
     }
