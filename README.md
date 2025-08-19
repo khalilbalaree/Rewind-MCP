@@ -83,7 +83,6 @@ EOF
 👤 User: "Add authentication to the login function"
 
 🤖 Agent: I'll add authentication to your login function.
-⏺ Rewind-MCP - checkpoint (description: "Add authentication to login", files: ["src/auth.js"])
 ✅ Checkpoint created: "Add authentication to login"
 Files captured: 1
   - src/auth.js
@@ -105,7 +104,6 @@ Restored files:
 👤 User: "Create a new config file for the database"
 
 🤖 Agent: I'll create a database configuration file.
-⏺ Rewind-MCP - checkpoint (description: "Create database config", files: ["config/database.js"])
 ✅ Checkpoint created: "Create database config"
 Files captured: 1
   - config/database.js (created)
@@ -125,10 +123,9 @@ Restored files:
 👤 User: "Delete the old utility functions file"
 
 🤖 Agent: I'll remove the old utility functions file.
-⏺ Rewind-MCP - checkpoint (description: "Delete old utils", files: ["src/utils.js"])
 ✅ Checkpoint created: "Delete old utils"
 Files captured: 1
-  - src/utils.js
+  - src/utils.js (deleted)
 
 🤖 Agent: "I have deleted the old utility functions file"
 
@@ -145,7 +142,6 @@ Restored files:
 👤 User: "Refactor the entire authentication system"
 
 🤖 Agent: I'll refactor the authentication system across multiple files.
-⏺ Rewind-MCP - checkpoint (description: "Refactor auth system", files: ["src/auth.js", "src/middleware.js", "src/routes.js"])
 ✅ Checkpoint created: "Refactor auth system"
 Files captured: 3
   - src/auth.js (modified)
@@ -157,7 +153,6 @@ Files captured: 3
 👤 User: "The refactoring introduced bugs. Please rewind all these changes"
 
 🤖 Agent: I'll restore all files from the checkpoint.
-⏺ Rewind-MCP - undo
 ✅ Undone: "Refactor auth system"
 Restored files:
   - src/auth.js
