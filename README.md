@@ -29,8 +29,8 @@ Smart checkpoint-based undo mcp server for Claude Code CLI.
 
 ### Installation
 ```bash
-git clone https://github.com/khalilbalaree/undo-mcp.git
-cd undo-mcp
+git clone https://github.com/khalilbalaree/Rewind-MCP.git
+cd Rewind-MCP
 ```
 then,
 ```bash
@@ -186,8 +186,8 @@ Restored files:
 ## Available Tools
 
 - `checkpoint(files, description)` - Create checkpoint before changes
-- `undo(file)` - Restore file to previous checkpoint  
-- `list_undos()` - Show available checkpoints (auto-deduplicates)
+- `undo(file)` - Restore to previous checkpoint  
+- `list_undos()` - Show available checkpoints
 - `status()` - Show current checkpoint status
 
 
