@@ -48,9 +48,9 @@ Edit `~/Library/Application Support/Claude/claude_code_config.json`:
 ```json
 {
   "mcpServers": {
-    "undo-mcp": {
+    "Rewind-MCP": {
       "command": "node",
-      "args": ["/absolute/path/to/undo-mcp/dist/index.js"],
+      "args": ["/absolute/path/to/Rewind-MCP/dist/index.js"],
       "env": {}
     }
   }
@@ -66,9 +66,9 @@ For easier project sharing and version control, create a `.mcp.json` file in you
 cat > .mcp.json << 'EOF'
 {
   "mcpServers": {
-    "undo-mcp": {
+    "Rewind-MCP": {
       "command": "node",
-      "args": ["/absolute/path/to/undo-mcp/dist/index.js"],
+      "args": ["/absolute/path/to/Rewind-MCP/dist/index.js"],
       "env": {}
     }
   }
