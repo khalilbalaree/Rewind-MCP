@@ -1,6 +1,6 @@
 # 🔄 Rewind MCP
 
-Smart checkpoint-based undo system for Claude Codec CLI.
+Smart checkpoint-based undo mcp server for Claude Codec CLI.
 
 ## Features
 
