@@ -78,86 +78,46 @@ EOF
 
 ## Use Cases
 
-### Example 1: Undoing File Modifications
 ```
-👤 User: "Add authentication to the login function"
+👤 User: "Add error handling to my API"
 
-🤖 Agent: I'll add authentication to your login function.
-✅ Checkpoint created: "Add authentication to login"
-Files captured: 1
-  - src/auth.js
+🤖 Agent: I'll add comprehensive error handling to your API files.
 
-... (code changes)
+[Agent creates checkpoint before changes]
+✅ Checkpoint created: "Add API error handling"
+Files captured: 2
+  - src/api/routes.js
+  - src/middleware/errorHandler.js
 
-🤖 Agent: "I have added authentication to the login function"
+🤖 Agent: I've added try-catch blocks and centralized error handling to your API routes and created a new error middleware.
 
-👤 User: "This breaks the existing flow, please rewind the change"
+👤 User: "Actually, I want to try a different approach. Can you show me what checkpoints are available?"
 
-🤖 Agent: I'll undo the authentication changes.
-✅ Undone: "Add authentication to login" 
+🤖 Agent: I'll show you the available checkpoints.
+📋 Available checkpoints:
+  1. "Add API error handling" (2 files) - [Most Recent]
+  2. "Database schema update" (3 files)
+  3. "Initial project setup" (5 files)
+
+👤 User: "Rewind the most recent changes"
+
+🤖 Agent: I'll restore the files from the "Add API error handling" checkpoint.
+✅ Undone: "Add API error handling"
 Restored files:
-  - src/auth.js
-```
+  - src/api/routes.js
+  - src/middleware/errorHandler.js (deleted)
 
-### Example 2: Undoing File Creation
-```
-👤 User: "Create a new config file for the database"
+👤 User: "Perfect! Now implement error handling using a custom Error class instead"
 
-🤖 Agent: I'll create a database configuration file.
-✅ Checkpoint created: "Create database config"
-Files captured: 1
-  - config/database.js (created)
+🤖 Agent: I'll implement error handling using a custom Error class approach.
 
-🤖 Agent: "I have created the database configuration file"
+[Agent creates new checkpoint]
+✅ Checkpoint created: "Custom error class implementation"
+Files captured: 2
+  - src/api/routes.js
+  - src/utils/CustomError.js (created)
 
-👤 User: "Actually, I want to use environment variables instead. Please rewind this"
-
-🤖 Agent: I'll remove the database config file.
-✅ Undone: "Create database config"
-Restored files:
-  - config/database.js (deleted)
-```
-
-### Example 3: Undoing File Deletion
-```
-👤 User: "Delete the old utility functions file"
-
-🤖 Agent: I'll remove the old utility functions file.
-✅ Checkpoint created: "Delete old utils"
-Files captured: 1
-  - src/utils.js (deleted)
-
-🤖 Agent: "I have deleted the old utility functions file"
-
-👤 User: "Wait, I still need some functions from that file. Please rewind the deletion"
-
-🤖 Agent: I'll restore the deleted utility functions file.
-✅ Undone: "Delete old utils"
-Restored files:
-  - src/utils.js (restored from deletion)
-```
-
-### Example 4: Multiple File Operations
-```
-👤 User: "Refactor the entire authentication system"
-
-🤖 Agent: I'll refactor the authentication system across multiple files.
-✅ Checkpoint created: "Refactor auth system"
-Files captured: 3
-  - src/auth.js (modified)
-  - src/middleware.js (modified)  
-  - src/routes.js (modified)
-
-🤖 Agent: "I have refactored the authentication system across multiple files"
-
-👤 User: "The refactoring introduced bugs. Please rewind all these changes"
-
-🤖 Agent: I'll restore all files from the checkpoint.
-✅ Undone: "Refactor auth system"
-Restored files:
-  - src/auth.js
-  - src/middleware.js
-  - src/routes.js
+🤖 Agent: I've implemented error handling using a custom Error class that provides better error categorization and response formatting.
 ```
 
 
