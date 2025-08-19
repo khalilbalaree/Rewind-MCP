@@ -35,7 +35,7 @@ const TOOLS = [
         },
         description: {
           type: "string",
-          description: "Description of what changes will be made",
+          description: "Concise, action-focused description of the next specific change to be made",
           default: "Manual checkpoint",
         },
       },
@@ -68,7 +68,7 @@ const TOOLS = [
   },
   {
     name: "status",
-    description: "Get status of the undo system (checkpoint count)",
+    description: "Get current status of the undo system (checkpoint count, number of checkpoints in the stack, and whether undo is possible)",
     inputSchema: {
       type: "object",
       properties: {},
