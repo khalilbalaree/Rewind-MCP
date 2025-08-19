@@ -1,23 +1,21 @@
-# 🔄 Undo MCP Server
+# 🔄 Rewind MCP
 
-Smart checkpoint-based undo system for Claude Code.
+Smart checkpoint-based undo system for Claude Codec CLI.
 
 ## Features
 
-- 🎯 **Smart Checkpointing**: Auto-checkpoint before file modifications  
-- 🧹 **Auto-Deduplication**: Removes duplicate/rejected change checkpoints
-- ⚡ **Fast Restoration**: Instantly restore files to previous states
-- 🔍 **Clean History**: Only keeps meaningful checkpoints
+- 🎯 **Smart Checkpointing**: Automatically saves file states before any changes
+- 🔄 **Complete Undo Support**: Restore modified files, recover deleted files, or remove unwanted files  
+- ⚡ **Fast Multi-File Restore**: Undo changes across multiple files instantly
+- 🧹 **Clean History**: Automatically removes duplicate checkpoints
 
 ## Example Agent Interaction
 
 ```
-👤 User: "Add error handling but I might want to undo it"
+👤 User: "Add error handling..."
 
 🤖 Agent: Creating checkpoint before modifications...
 ✅ Checkpoint: "Before adding error handling"
-
-[Agent adds error handling code]
 
 👤 User: "This breaks the flow, please undo"
 
@@ -28,10 +26,12 @@ Smart checkpoint-based undo system for Claude Code.
 ## 🚀 Quick Start
 
 ### Installation
-
 ```bash
 git clone https://github.com/khalilbalaree/undo-mcp.git
 cd undo-mcp
+```
+then,
+```bash
 npm install
 npm run build
 ```
@@ -89,69 +89,97 @@ cat > .mcp.json << 'EOF'
 EOF
 ```
 
-Then run Claude Code from that directory. Claude Code will automatically detect and use the local `.mcp.json` configuration.
 
-> **Note**: Replace `/absolute/path/to/undo-mcp/dist/index.js` with the actual path to your undo-mcp installation.
+## Use Cases
 
-## How It Works
+### Example 1: Undoing File Modifications
+```
+👤 User: "Add authentication to the login function"
 
-1. **Checkpoint**: Agent calls `checkpoint` before file modifications
-2. **Modify**: Agent makes changes (user may accept/reject)  
-3. **Auto-Clean**: System removes duplicate checkpoints when accessing undo history
+🤖 Agent: I'll add authentication to your login function.
+⏺ undo-mcp - checkpoint (description: "Add authentication to login", files: ["src/auth.js"])
+✅ Checkpoint created: "Add authentication to login"
+Files captured: 1
+  - src/auth.js
 
-### Undo Examples
+👤 User: "This breaks the existing flow, please rewind the change"
 
-**Scenario 1: Rejected code changes**
-```bash
-# Agent creates checkpoint before refactoring
-checkpoint(["auth.js"], "Before refactor")
-
-# Agent refactors code, user rejects changes  
-# File reverts to original state
-
-# When listing undos, duplicate checkpoint is auto-removed
-list_undos() # ✅ Clean history, no redundant checkpoints
+🤖 Agent: I'll undo the authentication changes.
+⏺ undo-mcp - undo
+✅ Undone: "Add authentication to login" 
+Restored files:
+  - src/auth.js
 ```
 
-**Scenario 2: Multiple undo steps**
-```bash
-# Multiple development iterations
-checkpoint(["api.js"], "Add user validation")     # State A
-# ... changes accepted ...
+### Example 2: Undoing File Creation
+```
+👤 User: "Create a new config file for the database"
 
-checkpoint(["api.js"], "Add error handling")      # State B  
-# ... changes accepted ...
+🤖 Agent: I'll create a database configuration file.
+⏺ undo-mcp - checkpoint (description: "Create database config", files: ["config/database.js"])
+✅ Checkpoint created: "Create database config"
+Files captured: 1
+  - config/database.js (created)
 
-checkpoint(["api.js"], "Add rate limiting")       # State C
-# ... changes rejected, want to undo ...
+👤 User: "Actually, I want to use environment variables instead. Please undo this"
 
-undo("api.js") # → Restores State B (before rate limiting)
-undo("api.js") # → Restores State A (before error handling)
+🤖 Agent: I'll remove the database config file.
+⏺ undo-mcp - undo
+✅ Undone: "Create database config"
+Restored files:
+  - config/database.js (deleted)
 ```
 
-**Scenario 3: Multi-file checkpoint restore**
-```bash
-# Working on authentication feature across multiple files
-checkpoint(["auth.js", "user.js", "middleware.js"], "Before auth refactor")
+### Example 3: Undoing File Deletion
+```
+👤 User: "Delete the old utility functions file"
 
-# Changes made to all files, but introduced bugs
-# Need to restore all files to checkpoint
+🤖 Agent: I'll remove the old utility functions file.
+⏺ undo-mcp - checkpoint (description: "Delete old utils", files: ["src/utils.js"])
+✅ Checkpoint created: "Delete old utils"
+Files captured: 1
+  - src/utils.js
 
-undo("auth.js")       # Restore auth.js
-undo("user.js")       # Restore user.js  
-undo("middleware.js") # Restore middleware.js
+👤 User: "Wait, I still need some functions from that file. Please undo the deletion"
+
+🤖 Agent: I'll restore the deleted utility functions file.
+⏺ undo-mcp - undo
+✅ Undone: "Delete old utils"
+Restored files:
+  - src/utils.js (restored from deletion)
 ```
 
-## Available Commands
+### Example 4: Multiple File Operations
+```
+👤 User: "Refactor the entire authentication system"
+
+🤖 Agent: I'll refactor the authentication system across multiple files.
+⏺ undo-mcp - checkpoint (description: "Refactor auth system", files: ["src/auth.js", "src/middleware.js", "src/routes.js"])
+✅ Checkpoint created: "Refactor auth system"
+Files captured: 3
+  - src/auth.js (modified)
+  - src/middleware.js (modified)  
+  - src/routes.js (modified)
+
+👤 User: "The refactoring introduced bugs. Please rewind all these changes"
+
+🤖 Agent: I'll restore all files from the checkpoint.
+⏺ undo-mcp - undo
+✅ Undone: "Refactor auth system"
+Restored files:
+  - src/auth.js
+  - src/middleware.js
+  - src/routes.js
+```
+
+
+## Available Tools
 
 - `checkpoint(files, description)` - Create checkpoint before changes
 - `undo(file)` - Restore file to previous checkpoint  
 - `list_undos()` - Show available checkpoints (auto-deduplicates)
 - `status()` - Show current checkpoint status
 
-## Technical Details
-
-**Auto-Deduplication**: Removes checkpoints that match current file state or have duplicate content, keeping only meaningful restore points.
 
 ## 🤝 Contributing
 
