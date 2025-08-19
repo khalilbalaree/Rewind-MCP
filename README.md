@@ -1,6 +1,6 @@
 # 🔄 Undo MCP Server
 
-Smart checkpoint-based undo system for Claude Code with automatic deduplication.
+Smart checkpoint-based undo system for Claude Code.
 
 ## Features
 
@@ -8,6 +8,22 @@ Smart checkpoint-based undo system for Claude Code with automatic deduplication.
 - 🧹 **Auto-Deduplication**: Removes duplicate/rejected change checkpoints
 - ⚡ **Fast Restoration**: Instantly restore files to previous states
 - 🔍 **Clean History**: Only keeps meaningful checkpoints
+
+## Example Agent Interaction
+
+```
+👤 User: "Add error handling but I might want to undo it"
+
+🤖 Agent: Creating checkpoint before modifications...
+✅ Checkpoint: "Before adding error handling"
+
+[Agent adds error handling code]
+
+👤 User: "This breaks the flow, please undo"
+
+🤖 Agent: Restoring files from checkpoint...
+✅ Files restored to state before error handling
+```
 
 ## 🚀 Quick Start
 
@@ -101,22 +117,6 @@ checkpoint(["auth.js", "user.js", "middleware.js"], "Before auth refactor")
 undo("auth.js")       # Restore auth.js
 undo("user.js")       # Restore user.js  
 undo("middleware.js") # Restore middleware.js
-```
-
-## Example Agent Interaction
-
-```
-👤 User: "Add error handling but I might want to undo it"
-
-🤖 Agent: Creating checkpoint before modifications...
-✅ Checkpoint: "Before adding error handling"
-
-[Agent adds error handling code]
-
-👤 User: "This breaks the flow, please undo"
-
-🤖 Agent: Restoring files from checkpoint...
-✅ Files restored to state before error handling
 ```
 
 ## Available Commands
