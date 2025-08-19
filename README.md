@@ -70,6 +70,29 @@ Edit `%APPDATA%\Claude\claude_code_config.json`:
 }
 ```
 
+#### Project-Specific Configuration (Alternative)
+
+For easier project sharing and version control, create a `.mcp.json` file in your project directory:
+
+```bash
+# In your project directory
+cat > .mcp.json << 'EOF'
+{
+  "mcpServers": {
+    "undo-mcp": {
+      "command": "node",
+      "args": ["/absolute/path/to/undo-mcp/dist/index.js"],
+      "env": {}
+    }
+  }
+}
+EOF
+```
+
+Then run Claude Code from that directory. Claude Code will automatically detect and use the local `.mcp.json` configuration.
+
+> **Note**: Replace `/absolute/path/to/undo-mcp/dist/index.js` with the actual path to your undo-mcp installation.
+
 ## How It Works
 
 1. **Checkpoint**: Agent calls `checkpoint` before file modifications
